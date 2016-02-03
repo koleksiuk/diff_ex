@@ -1,0 +1,16 @@
+diff --git a/simple-file.rb b/simple-file.rb
+new file mode 100644
+index 0000000..2919bef
+--- /dev/null
++++ b/simple-file.rb
+@@ -0,0 +1,3 @@
++class Foo
++  attr_accessor :bar
++end
+diff --git a/test.txt b/test.txt
+new file mode 100644
+index 0000000..d429732
+--- /dev/null
++++ b/test.txt
+@@ -0,0 +1 @@
++This is file content
