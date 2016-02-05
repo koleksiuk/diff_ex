@@ -1,11 +1,13 @@
-defmodule DiffEx.LineTest do
+defmodule DiffEx.LineParserTest do
   use ExUnit.Case, async: true
   doctest DiffEx
+
+  alias DiffEx.LineParser, as: LineParser
 
   test "new_file? returns true if it is a new diff file" do
     line = "diff --git a/simple-file.rb b/simple-file.rb"
 
-    assert DiffEx.Line.new_file?(line)
+    assert LineParser.new_file?(line)
   end
 
   test "new_file? returns false if it is not a new diff file" do
@@ -20,7 +22,7 @@ defmodule DiffEx.LineTest do
     ]
 
     Enum.each(lines, fn (line) ->
-      refute DiffEx.Line.new_file?(line), "line: #{line}"
+      refute LineParser.new_file?(line), "line: #{line}"
     end)
   end
 end

@@ -1,7 +1,7 @@
-defmodule DiffEx.Line do
+defmodule DiffEx.LineParser do
   @new_file  ~r/^diff/
   @from_file ~r/^\-\-\-/
-  @to_file   ~r/^\+\+\+ b\/(?<file_name>.*)/
+  @to_file   ~r/^\+\+\+ b\/(?<name>.*)/
   @content   ~r/^(?<body>[\ @\+\-\\].*)/
 
   def new_file?(line) do
@@ -12,20 +12,18 @@ defmodule DiffEx.Line do
   end
 
   def parse_line(line) when is_binary(line) do
-    [
-      {:file, @file},
+    regexes = [
       {:from_file, @from_file},
       {:to_file, @to_file},
       {:content, @content}
     ]
+
+    regexes
+    |> Enum.map(&process_line(line, &1))
+    |> Enum.find(fn ({_name, el}) -> el != nil end)
   end
 
-  defp parsed_line(line, regex, {content, regex_match}) do
-  end
-
-  defp parsed_line(line, regex) do
-    case Regex.run(regex, line) do
-      nil -> nil
-    end
+  defp process_line(line, {regex_name, regex}) do
+    {regex_name, Regex.named_captures(regex, line)}
   end
 end
