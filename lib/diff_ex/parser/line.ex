@@ -1,4 +1,4 @@
-defmodule DiffEx.LineParser do
+defmodule DiffEx.Parser.Line do
   @new_file  ~r/^diff/
   @from_file ~r/^\-\-\-/
   @to_file   ~r/^\+\+\+ b\/(?<name>.*)/
@@ -24,6 +24,19 @@ defmodule DiffEx.LineParser do
   end
 
   defp process_line(line, {regex_name, regex}) do
-    {regex_name, Regex.named_captures(regex, line)}
+    captures = regex
+    |> Regex.named_captures(line)
+    |> captures_to_atoms
+
+    {regex_name, captures}
+  end
+
+  defp captures_to_atoms(nil), do: nil
+
+  defp captures_to_atoms(captures) do
+    captures
+    |> Enum.reduce(%{}, fn ({key, val}, acc) ->
+      Map.put(acc, String.to_atom(key), val)
+    end)
   end
 end

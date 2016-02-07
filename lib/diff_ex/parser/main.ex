@@ -1,5 +1,5 @@
-defmodule DiffEx.Parser do
-  import DiffEx.LineParser
+defmodule DiffEx.Parser.Main do
+  alias DiffEx.Parser.Line, as: LineParser
   alias DiffEx.File, as: File
 
   def parse(contents) do
@@ -9,7 +9,7 @@ defmodule DiffEx.Parser do
   end
 
   defp parse_diff([], files) do
-    files
+    Enum.map(files, fn (file) -> Map.put(file, :body, Enum.reverse(file.body)) end)
   end
 
   defp parse_diff(contents, files) do
@@ -21,10 +21,10 @@ defmodule DiffEx.Parser do
   end
 
   defp parse_diff(file, contents = [line | rest], files) do
-    if new_file?(line) do
+    if LineParser.new_file?(line) do
       parse_diff(%File{}, rest, [file | files])
     else
-      case parse_line(line) do
+      case LineParser.parse_line(line) do
         { :content, captures} -> merge_body(file, captures)
         { _regex_name, captures } -> Map.merge(file, captures)
         _ -> file
@@ -32,8 +32,7 @@ defmodule DiffEx.Parser do
     end
   end
 
-  defp merge_body(file, capture) do
-    file
-    |> Map.put(:body, file.body <> capture["body"])
+  defp merge_body(file, %{body: captured_body}) do
+    Map.put(file, :body, [captured_body | file.body])
   end
 end

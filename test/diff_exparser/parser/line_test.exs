@@ -1,8 +1,8 @@
-defmodule DiffEx.LineParserTest do
+defmodule DiffEx.Parser.LineTest do
   use ExUnit.Case, async: true
   doctest DiffEx
 
-  alias DiffEx.LineParser, as: LineParser
+  alias DiffEx.Parser.Line, as: LineParser
 
   test "new_file? returns true if it is a new diff file" do
     line = "diff --git a/simple-file.rb b/simple-file.rb"
