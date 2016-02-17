@@ -9,7 +9,7 @@ defmodule DiffEx.Parser.MainTest do
   end
 
   test "parse correctly returns array of files", %{contents: contents} do
-    [file_1, file_2, _] = DiffEx.Parser.Main.parse(contents)
+    [file_1, file_2] = DiffEx.Parser.Main.parse(contents)
 
     assert file_1.name == "test.txt"
     assert file_1.body == [

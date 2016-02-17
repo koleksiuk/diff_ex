@@ -6,6 +6,6 @@ defmodule DiffEx do
   end
 
   def parse(diff_contents) when is_binary(diff_contents) do
-    DiffEx.Parser.parse(diff_contents)
+    DiffEx.Parser.Main.parse(diff_contents)
   end
 end
