@@ -5,24 +5,33 @@ defmodule DiffEx.File do
 
   @information ~r/^@@ .+\+(?<line_number>\d+),/
   @added_line ~r/^\+(?!\+|\+)/
+  @removed_line ~r/^\-(?!\+|\+)/
   @untouched_line ~r/^[^-]/
 
   def added_lines(file) do
-    fetch_added_lines(file.body)
+    fetch_lines(file.body, @added_line)
   end
 
-  defp fetch_added_lines(lines) do
-    fetch_added_lines(lines, [])
+  def removed_lines(file) do
+    fetch_lines(file.body, @removed_line)
   end
 
-  defp fetch_added_lines([], converted_lines) do
+  def untouched_lines(file) do
+    fetch_lines(file.body, @untouched_line)
+  end
+
+  defp fetch_lines(lines, regex) do
+    fetch_lines(lines, [], regex)
+  end
+
+  defp fetch_lines([], converted_lines, regex) do
     Enum.reverse(converted_lines)
   end
 
-  defp fetch_added_lines([new_line | lines], converted_lines) do
-    case Regex.run(@added_line, new_line) do
-      nil -> fetch_added_lines(lines, converted_lines)
-      _ -> fetch_added_lines(lines, [%Line{content: new_line} | converted_lines])
+  defp fetch_lines([new_line | lines], converted_lines, regex) do
+    case Regex.run(regex, new_line) do
+      nil -> fetch_lines(lines, converted_lines, regex)
+      _ -> fetch_lines(lines, [%Line{content: new_line} | converted_lines], regex)
     end
   end
 end

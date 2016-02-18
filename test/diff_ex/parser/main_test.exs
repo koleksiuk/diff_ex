@@ -3,13 +3,14 @@ defmodule DiffEx.Parser.MainTest do
   doctest DiffEx
 
   setup do
-    {:ok, body} = File.read("test/fixtures/simple-commit.diff")
+    {:ok, commit_1} = File.read("test/fixtures/simple-commit.diff")
+    {:ok, commit_2} = File.read("test/fixtures/commit-with-line-changes.diff")
 
-    {:ok, [contents: body]}
+    {:ok, [commit_1: commit_1, commit_2: commit_2]}
   end
 
-  test "parse correctly returns array of files", %{contents: contents} do
-    [file_1, file_2] = DiffEx.Parser.Main.parse(contents)
+  test "parses correctly simple patch and returns array of files", %{ commit_1: commit_1 } do
+    [file_1, file_2] = DiffEx.Parser.Main.parse(commit_1)
 
     assert file_1.name == "test.txt"
     assert file_1.body == [
@@ -23,6 +24,20 @@ defmodule DiffEx.Parser.MainTest do
       "+class Foo",
       "+  attr_accessor :bar",
       "+end",
+    ]
+  end
+
+  test "parses correctly and returns array of files", %{ commit_2: commit_2 } do
+    [file_1] = DiffEx.Parser.Main.parse(commit_2)
+
+    assert file_1.name == "simple-file.rb"
+    assert file_1.body == [
+      "@@ -1,3 +1,4 @@",
+      " class Foo",
+      "-  attr_accessor :bar",
+      "+  attr_reader :foo",
+      "+  attr_writer :bar",
+      " end"
     ]
   end
 end
