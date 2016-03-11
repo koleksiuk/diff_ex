@@ -2,6 +2,9 @@ defmodule DiffEx.FileTest do
   use ExUnit.Case, async: true
   doctest DiffEx
 
+  alias DiffEx.File
+  alias DiffEx.Line
+
   setup do
     body = [
       "@@ -1,3 +1,4 @@",
@@ -12,28 +15,32 @@ defmodule DiffEx.FileTest do
       " end"
     ]
 
-    diff_file = %DiffEx.File { name: "test.txt", body: body }
+    diff_file = %File{ new_name: "test.txt", body: body }
 
     {:ok, diff_file: diff_file}
   end
 
   test "added_lines/1 returns Line structs of added lines", %{diff_file: diff_file} do
-    assert DiffEx.File.added_lines(diff_file) == [
-      %DiffEx.Line { content: "+  attr_reader :foo" },
-      %DiffEx.Line { content: "+  attr_writer :bar" }
+    assert File.added_lines(diff_file) == [
+      %Line { content: "+  attr_reader :foo" },
+      %Line { content: "+  attr_writer :bar" }
     ]
   end
 
   test "removed_lines/1 returns Line structs of removed lines", %{diff_file: diff_file} do
-    assert DiffEx.File.removed_lines(diff_file) == [
-      %DiffEx.Line { content: "-  attr_accessor :bar" }
+    assert File.removed_lines(diff_file) == [
+      %Line { content: "-  attr_accessor :bar" }
     ]
   end
 
   test "untouched_lines/1 returns Line structs of untouched lines", %{diff_file: diff_file} do
-    assert DiffEx.File.untouched_lines(diff_file) == [
-      %DiffEx.Line { content: " class Foo" },
-      %DiffEx.Line { content: " end" }
+    assert File.untouched_lines(diff_file) == [
+      %Line { content: " class Foo" },
+      %Line { content: " end" }
     ]
+  end
+
+  test "name/1 returns File name", %{diff_file: diff_file} do
+    assert File.name(diff_file) == "test.txt"
   end
 end

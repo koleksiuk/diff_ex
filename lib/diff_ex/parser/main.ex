@@ -20,7 +20,7 @@ defmodule DiffEx.Parser.Main do
     parse_diff([], [file | files])
   end
 
-  defp parse_diff_content(file, contents = [line | rest], files) do
+  defp parse_diff_content(file, [line | rest], files) do
     if LineParser.new_file?(line) do
       if file == nil do
         parse_diff_content(%File{}, rest, files)
@@ -28,11 +28,13 @@ defmodule DiffEx.Parser.Main do
         parse_diff_content(%File{}, rest, [file | files])
       end
     else
-      case LineParser.parse_line(line) do
+      file = case LineParser.parse_line(line) do
         { :content, captures} -> merge_body(file, captures)
         { _regex_name, captures } -> Map.merge(file, captures)
         _ -> file
-      end |> parse_diff_content(rest, files)
+      end
+
+      parse_diff_content(file, rest, files)
     end
   end
 
