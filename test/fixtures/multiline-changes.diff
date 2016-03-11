@@ -1,0 +1,13 @@
+diff --git a/simple-file.rb b/simple-file.rb
+index 458bc52..fc28944 100644
+--- a/simple-file.rb
++++ b/simple-file.rb
+@@ -1,4 +1,7 @@
+ class Foo
+-  attr_reader :foo
++  attr_reader :foobar
+   attr_writer :bar
+ end
++
++class Foo < Bar
++end
