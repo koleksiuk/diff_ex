@@ -1,5 +1,5 @@
 defmodule DiffEx.File do
-  defstruct new_name: "", body: [], secure_hash: ""
+  defstruct old_path: "", new_path: "", body: [], secure_hash: ""
 
   alias DiffEx.Line, as: Line
 
@@ -20,12 +20,13 @@ defmodule DiffEx.File do
     fetch_lines(file.body, @untouched_line)
   end
 
-  def old_name(file), do: file.old_name
-  def new_name(file), do: file.new_name
-  def name(file), do: new_name(file)
+  def old_path(file), do: file.old_path
+  def new_path(file), do: file.new_path
+  def name(file), do: new_path(file)
 
-  def new_file?("/dev/null"), do: true
-  def new_file?(_), do: false
+  def new_file?(file) do
+    is_null_path?(file.old_path)
+  end
 
   defp fetch_lines(lines, regex) do
     fetch_lines(lines, [], regex)
@@ -41,4 +42,7 @@ defmodule DiffEx.File do
       _ -> fetch_lines(lines, [%Line{content: new_line} | converted_lines], regex)
     end
   end
+
+  defp is_null_path?("/dev/null"), do: true
+  defp is_null_path?(_), do: false
 end

@@ -15,7 +15,7 @@ defmodule DiffEx.FileTest do
       " end"
     ]
 
-    diff_file = %File{ new_name: "test.txt", body: body }
+    diff_file = %File{ new_path: "test.txt", body: body }
 
     {:ok, diff_file: diff_file}
   end
@@ -42,5 +42,17 @@ defmodule DiffEx.FileTest do
 
   test "name/1 returns File name", %{diff_file: diff_file} do
     assert File.name(diff_file) == "test.txt"
+  end
+
+  test "new_file?/1 returns true if old name is /dev/null" do
+    diff_file = %File{ old_path: "/dev/null" }
+
+    assert File.new_file?(diff_file)
+  end
+
+  test "new_file?/1 returns false if old name is not /dev/null" do
+    diff_file = %File{ old_path: "filename.txt" }
+
+    refute File.new_file?(diff_file)
   end
 end
